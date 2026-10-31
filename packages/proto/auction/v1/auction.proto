@@ -1,0 +1,96 @@
+syntax = "proto3";
+
+package auction.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// AuctionService is the single contract between @gavel/web and @gavel/api.
+service AuctionService {
+  // unary: lista aktywnych i zakończonych aukcji
+  rpc ListItems(ListItemsRequest) returns (ListItemsResponse);
+  // unary: szczegóły jednego przedmiotu z historią ofert
+  rpc GetItem(GetItemRequest) returns (GetItemResponse);
+  // unary: złożenie oferty
+  rpc PlaceBid(PlaceBidRequest) returns (PlaceBidResponse);
+  // server streaming: zdarzenia dla jednego przedmiotu na żywo
+  rpc WatchItem(WatchItemRequest) returns (stream ItemEvent);
+}
+
+enum ItemStatus {
+  ITEM_STATUS_UNSPECIFIED = 0;
+  ITEM_STATUS_ACTIVE = 1;
+  ITEM_STATUS_ENDED = 2;
+}
+
+message Money {
+  int64 amount_minor = 1; // grosze, bez floatów
+  string currency = 2; // "PLN"
+}
+
+message Bid {
+  string id = 1;
+  string item_id = 2;
+  string bidder = 3;
+  Money amount = 4;
+  google.protobuf.Timestamp placed_at = 5;
+}
+
+message Item {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  string image_url = 4;
+  Money starting_price = 5;
+  Money current_price = 6;
+  Money min_increment = 7;
+  int32 bid_count = 8;
+  string leading_bidder = 9;
+  google.protobuf.Timestamp ends_at = 10;
+  ItemStatus status = 11;
+}
+
+message ListItemsRequest {
+  ItemStatus status = 1; // UNSPECIFIED = wszystkie
+}
+
+message ListItemsResponse {
+  repeated Item items = 1;
+}
+
+message GetItemRequest {
+  string item_id = 1;
+}
+
+message GetItemResponse {
+  Item item = 1;
+  repeated Bid recent_bids = 2; // ostatnie 20, najnowsze pierwsze
+}
+
+message PlaceBidRequest {
+  string item_id = 1;
+  Money amount = 2;
+  // bidder pochodzi z nagłówka autoryzacji, nie z body
+}
+
+message PlaceBidResponse {
+  Bid bid = 1;
+  Item item = 2;
+}
+
+message WatchItemRequest {
+  string item_id = 1;
+}
+
+message ItemEvent {
+  oneof event {
+    Item snapshot = 1; // pierwsze zdarzenie po podłączeniu
+    Bid bid_placed = 2;
+    Item auction_ended = 3;
+  }
+  int32 viewers = 10; // ilu klientów ogląda przedmiot
+}
+
+// Typed detail attached to FAILED_PRECONDITION when a bid is too low.
+message BidRejectedDetail {
+  Money minimum_bid = 1;
+}

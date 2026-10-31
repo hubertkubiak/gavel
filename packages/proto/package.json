@@ -1,0 +1,20 @@
+{
+  "name": "@gavel/proto",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Generated Protobuf-ES types for the Gavel auction contract",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./gen/auction/v1/auction_pb.d.ts",
+      "default": "./gen/auction/v1/auction_pb.js"
+    }
+  },
+  "files": [
+    "gen",
+    "auction"
+  ],
+  "dependencies": {
+    "@bufbuild/protobuf": "^2.16.0"
+  }
+}

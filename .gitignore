@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.angular/
+coverage/
+packages/proto/gen/
+test-results/
+playwright-report/
+*.log
+.env
+.DS_Store

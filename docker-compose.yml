@@ -1,0 +1,26 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      WEB_ORIGIN: http://localhost:4200
+      SEED_FAST: ${SEED_FAST:-0}
+      LATENCY_MS: ${LATENCY_MS:-0}
+    ports:
+      - '8080:8080'
+    healthcheck:
+      test: ['CMD', 'wget', '-qO-', 'http://localhost:8080/healthz']
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    ports:
+      - '4200:4200'
+    depends_on:
+      api:
+        condition: service_healthy

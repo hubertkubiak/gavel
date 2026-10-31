@@ -1,0 +1,50 @@
+{
+  "name": "gavel",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Live auctions over gRPC in the browser — Angular + Connect + Node.js",
+  "packageManager": "pnpm@10.34.9",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "postinstall": "pnpm run generate",
+    "generate": "buf generate",
+    "buf:lint": "buf lint",
+    "buf:breaking": "buf breaking --against \".git#branch=main\"",
+    "dev": "concurrently -n api,web -c magenta,cyan \"pnpm dev:api\" \"pnpm dev:web\"",
+    "dev:fast": "concurrently -n api,web -c magenta,cyan \"pnpm -F @gavel/api dev:fast\" \"pnpm dev:web\"",
+    "build": "pnpm -r build",
+    "test": "pnpm -r --filter=!@gavel/e2e test",
+    "e2e": "pnpm -F @gavel/e2e test",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "pnpm -r typecheck",
+    "prepare": "husky",
+    "dev:api": "pnpm -F @gavel/api dev",
+    "dev:web": "pnpm -F @gavel/web start"
+  },
+  "devDependencies": {
+    "@bufbuild/buf": "^1.75.0",
+    "@bufbuild/protoc-gen-es": "^2.16.0",
+    "@eslint/js": "^10.0.1",
+    "angular-eslint": "^22.6.0",
+    "concurrently": "^9.2.0",
+    "eslint": "^10.14.0",
+    "globals": "^17.13.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.0",
+    "prettier": "^3.6.0",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8"
+  },
+  "lint-staged": {
+    "*.{ts,js,mjs}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,html,css,yml,yaml}": "prettier --write",
+    "*.proto": "buf format -w"
+  }
+}

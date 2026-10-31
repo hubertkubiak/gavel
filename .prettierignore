@@ -1,0 +1,9 @@
+pnpm-lock.yaml
+packages/proto/gen
+dist
+.angular
+coverage
+SPEC.md
+test-results
+playwright-report
+*.gif

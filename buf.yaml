@@ -1,0 +1,12 @@
+version: v2
+modules:
+  - path: packages/proto
+lint:
+  use:
+    - STANDARD
+  except:
+    # WatchItem streams ItemEvent — a domain event, not a "WatchItemResponse".
+    - RPC_RESPONSE_STANDARD_NAME
+breaking:
+  use:
+    - FILE

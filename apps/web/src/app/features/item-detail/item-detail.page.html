@@ -1,0 +1,234 @@
+<gv-connection-banner [visible]="store.connection() === 'reconnecting'" />
+
+<a
+  routerLink="/"
+  class="mb-5 inline-flex items-center gap-1.5 rounded-md text-sm text-muted transition-colors hover:text-fg"
+>
+  <svg lucideArrowLeft [size]="16" aria-hidden="true"></svg> Wszystkie aukcje
+</a>
+
+@if (store.notFound()) {
+  <!-- US-3: unknown id -->
+  <section
+    class="card fade-up mx-auto mt-10 flex max-w-md flex-col items-center gap-4 p-10 text-center"
+  >
+    <span class="grid size-14 place-items-center rounded-2xl bg-surface-2 text-muted">
+      <svg lucideSearchX [size]="26" aria-hidden="true"></svg>
+    </span>
+    <h1 class="text-2xl font-semibold tracking-tight">Ta aukcja nie istnieje</h1>
+    <p class="text-muted">Może została usunięta, a może link był literówką.</p>
+    <a routerLink="/" class="btn btn-primary">Wróć do listy</a>
+  </section>
+} @else if (store.error(); as err) {
+  <section class="card mx-auto mt-10 max-w-md p-10 text-center" role="alert">
+    <p class="font-medium">{{ err.message }}</p>
+    <button type="button" class="btn btn-ghost mt-4" (click)="store.connect(id())">
+      Spróbuj ponownie
+    </button>
+  </section>
+} @else if (item(); as item) {
+  <div
+    class="grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:grid-rows-[auto_auto_1fr] lg:gap-8"
+  >
+    <div
+      class="card relative aspect-[16/10] overflow-hidden bg-surface-2 sm:aspect-[4/3] lg:col-start-1"
+    >
+      <img
+        [ngSrc]="item.imageUrl"
+        fill
+        priority
+        sizes="(min-width: 1024px) 60vw, 100vw"
+        alt=""
+        class="object-cover"
+        [style.view-transition-name]="'item-' + item.id"
+      />
+    </div>
+
+    <!-- Live panel: right column on desktop, right under the image on phones -->
+    <div
+      class="flex flex-col gap-6 lg:sticky lg:top-24 lg:col-start-2 lg:row-span-3 lg:row-start-1 lg:self-start"
+    >
+      <section class="card p-5 sm:p-6" aria-labelledby="title-h">
+        <div class="mb-4 flex items-center justify-between gap-3">
+          <gv-live-dot [state]="store.connection()" />
+          <span class="inline-flex items-center gap-1.5 text-sm text-muted" data-testid="viewers">
+            <svg lucideEye [size]="15" aria-hidden="true"></svg>
+            <span class="font-mono tabular-nums">{{ store.viewers() }}</span>
+            <span>{{ store.viewers() === 1 ? 'ogląda' : 'oglądają' }}</span>
+          </span>
+        </div>
+
+        <h1 id="title-h" class="text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">
+          {{ item.title }}
+        </h1>
+
+        <div class="mt-6 flex items-end justify-between gap-4">
+          <div>
+            <p class="text-sm text-muted">
+              {{ store.isEnded() ? 'Cena końcowa' : 'Aktualna cena' }}
+            </p>
+            <p
+              class="mt-1 text-4xl font-semibold text-accent sm:text-5xl"
+              [class.outbid-flash]="flash()"
+            >
+              <gv-animated-price
+                [amountMinor]="priceMinor()"
+                [currency]="item.currentPrice?.currency || 'PLN'"
+              />
+            </p>
+          </div>
+          @if (!store.isEnded()) {
+            <div class="text-right">
+              <p class="flex items-center justify-end gap-1 text-sm text-muted">
+                <svg lucideTimer [size]="14" aria-hidden="true"></svg> Koniec za
+              </p>
+              <gv-countdown class="mt-1 text-2xl font-semibold" [endsAt]="endsAtMs()" />
+            </div>
+          }
+        </div>
+
+        @if (item.leadingBidder) {
+          <p class="mt-4 flex items-center gap-2 text-sm">
+            <gv-avatar [nick]="item.leadingBidder" [size]="22" />
+            <span class="text-muted">{{ store.isEnded() ? 'Wygrywa' : 'Prowadzi' }}</span>
+            <span class="font-medium">{{ item.leadingBidder }}</span>
+            @if (store.isLeading()) {
+              <span class="badge bg-accent-soft text-accent">to Ty</span>
+            }
+          </p>
+        }
+
+        @if (store.isEnded()) {
+          <!-- US-6: the form disappears, the winner appears -->
+          <div
+            class="fade-up mt-6 rounded-2xl border p-5"
+            [class]="isWinner() ? 'border-accent/50 bg-accent-soft' : 'border-border bg-surface-2'"
+            role="status"
+          >
+            <div class="flex items-center gap-3">
+              <span
+                class="grid size-11 place-items-center rounded-xl bg-accent-strong text-accent-fg"
+              >
+                <svg lucideCrown [size]="20" aria-hidden="true"></svg>
+              </span>
+              <div>
+                <p class="font-semibold">
+                  @if (isWinner()) {
+                    Gratulacje, wygrywasz!
+                  } @else if (item.leadingBidder) {
+                    Zwycięzca: {{ item.leadingBidder }}
+                  } @else {
+                    Aukcja zakończona bez ofert
+                  }
+                </p>
+                @if (item.leadingBidder) {
+                  <p class="text-sm text-muted">
+                    za
+                    <span class="font-mono tabular-nums text-fg">{{
+                      item.currentPrice | money
+                    }}</span>
+                  </p>
+                }
+              </div>
+            </div>
+          </div>
+        } @else if (store.minimumBid(); as minimum) {
+          <!-- Desktop: inline. Mobile: sticky bottom bar. -->
+          <div
+            class="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-[0_-8px_24px_-12px_rgb(0_0_0_/_0.4)] lg:static lg:mt-6 lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none"
+          >
+            <gv-bid-form [itemId]="item.id" [minimum]="minimum" [increment]="item.minIncrement" />
+          </div>
+        }
+      </section>
+
+      <section class="card p-5 sm:p-6" aria-labelledby="history-h">
+        <h2
+          id="history-h"
+          class="mb-4 flex items-center justify-between text-sm font-semibold uppercase tracking-wider text-muted"
+        >
+          Historia ofert
+          <span class="font-mono normal-case tracking-normal">{{ store.bids().length }}/20</span>
+        </h2>
+        <ol
+          class="flex flex-col gap-2"
+          aria-live="polite"
+          aria-relevant="additions"
+          aria-label="Ostatnie oferty"
+        >
+          @for (bid of store.bids(); track bid.id; let first = $first) {
+            <li
+              animate.enter="bid-enter"
+              class="flex items-center gap-3 rounded-xl border border-transparent px-2.5 py-2"
+              [class.bid-fresh]="bid.id === store.freshBidId()"
+            >
+              <gv-avatar [nick]="bid.bidder" [size]="32" />
+              <div class="min-w-0 flex-1">
+                <p class="truncate text-sm font-medium">
+                  {{ bid.bidder }}
+                  @if (bid.bidder === nickname.nickname()) {
+                    <span class="badge ml-1 bg-accent-soft px-1.5 py-0 text-[10px] text-accent"
+                      >Ty</span
+                    >
+                  }
+                </p>
+                <p class="text-xs text-muted"><gv-relative-time [at]="bidTime(bid.placedAt)" /></p>
+              </div>
+              <p class="font-mono text-sm font-semibold tabular-nums" [class.text-accent]="first">
+                {{ bid.amount | money }}
+              </p>
+            </li>
+          } @empty {
+            <li class="py-6 text-center text-sm text-muted">
+              Jeszcze nikt nie licytował. Bądź pierwszy!
+            </li>
+          }
+        </ol>
+      </section>
+    </div>
+
+    <section class="card p-5 sm:p-6 lg:col-start-1" aria-labelledby="desc-h">
+      <h2 id="desc-h" class="mb-2 text-sm font-semibold uppercase tracking-wider text-muted">
+        Opis
+      </h2>
+      <p class="leading-relaxed">{{ item.description }}</p>
+      <dl class="mt-5 grid grid-cols-2 gap-4 border-t border-border pt-5 text-sm sm:grid-cols-3">
+        <div>
+          <dt class="text-muted">Cena wywoławcza</dt>
+          <dd class="mt-0.5 font-mono tabular-nums">{{ item.startingPrice | money }}</dd>
+        </div>
+        <div>
+          <dt class="text-muted">Minimalne podbicie</dt>
+          <dd class="mt-0.5 font-mono tabular-nums">{{ item.minIncrement | money }}</dd>
+        </div>
+        <div>
+          <dt class="text-muted">Liczba ofert</dt>
+          <dd class="mt-0.5 font-mono tabular-nums">{{ item.bidCount }}</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="card self-start p-5 sm:p-6 lg:col-start-1" aria-labelledby="chart-h">
+      <h2 id="chart-h" class="mb-3 text-sm font-semibold uppercase tracking-wider text-muted">
+        Przebieg ceny
+      </h2>
+      <gv-sparkline [points]="store.priceSeries()" />
+    </section>
+  </div>
+} @else {
+  <!-- Skeleton while the first snapshot arrives -->
+  <div
+    class="grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-8"
+    aria-busy="true"
+    aria-label="Ładowanie aukcji"
+  >
+    <div class="skeleton aspect-[4/3] rounded-2xl"></div>
+    <div class="card space-y-4 p-6">
+      <div class="skeleton h-4 w-20"></div>
+      <div class="skeleton h-8 w-4/5"></div>
+      <div class="skeleton h-12 w-1/2"></div>
+      <div class="skeleton h-11 w-full"></div>
+      <div class="skeleton h-24 w-full"></div>
+    </div>
+  </div>
+}

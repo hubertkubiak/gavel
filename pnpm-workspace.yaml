@@ -1,0 +1,11 @@
+packages:
+  - apps/*
+  - packages/*
+  - e2e
+
+onlyBuiltDependencies:
+  - '@bufbuild/buf'
+  - esbuild
+  - lmdb
+  - msgpackr-extract
+  - '@parcel/watcher'

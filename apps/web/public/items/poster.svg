@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <rect width="800" height="600" fill="#1a1414"/>
+  <g transform="translate(225 40)">
+    <rect width="350" height="520" fill="#f1e6d2"/>
+    <circle cx="175" cy="210" r="140" fill="#d7372f"/>
+    <path d="M60 380 C120 250 230 250 290 380 Z" fill="#141414"/>
+    <circle cx="130" cy="180" r="34" fill="#f1e6d2"/>
+    <circle cx="220" cy="180" r="34" fill="#f1e6d2"/>
+    <circle cx="138" cy="186" r="14" fill="#141414"/>
+    <circle cx="212" cy="186" r="14" fill="#141414"/>
+    <path d="M175 70 L200 20 L150 20 Z" fill="#7c3aed"/>
+    <rect x="30" y="410" width="290" height="4" fill="#141414"/>
+    <text x="30" y="460" font-family="Impact, 'Arial Black', sans-serif" font-size="46" fill="#141414" letter-spacing="2">KOT W BUTACH</text>
+    <text x="30" y="495" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#d7372f" letter-spacing="6">FILM · 1962</text>
+  </g>
+</svg>

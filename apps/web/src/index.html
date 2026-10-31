@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <title>Gavel — aukcje na żywo przez gRPC</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta
+      name="description"
+      content="Gavel — mini aukcje na żywo. Angular + Connect (gRPC-Web) + Node.js."
+    />
+    <meta name="theme-color" content="#0b0b0f" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=Geist+Mono:wght@400..700&display=swap"
+    />
+    <script>
+      // Apply the theme before first paint (dark-first, prefers-color-scheme as default).
+      (function () {
+        var t;
+        try {
+          t = localStorage.getItem('gavel.theme');
+        } catch (e) {}
+        if (t !== 'light' && t !== 'dark') {
+          t = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+        if (t === 'dark') document.documentElement.classList.add('dark');
+        document.documentElement.style.colorScheme = t;
+      })();
+    </script>
+  </head>
+  <body class="bg-bg text-fg">
+    <gv-root></gv-root>
+  </body>
+</html>

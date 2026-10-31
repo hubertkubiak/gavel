@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="38%" r="55%">
+      <stop offset="0" stop-color="#ffe7a8" stop-opacity=".55"/>
+      <stop offset=".5" stop-color="#7c3aed" stop-opacity=".18"/>
+      <stop offset="1" stop-color="#0b0b0f" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="globe" cx="45%" cy="35%" r="65%">
+      <stop offset="0" stop-color="#fffaf0"/>
+      <stop offset=".7" stop-color="#f3e3c0"/>
+      <stop offset="1" stop-color="#d9c08f"/>
+    </radialGradient>
+    <linearGradient id="nickel" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#8a8a94"/>
+      <stop offset=".45" stop-color="#f4f4f7"/>
+      <stop offset="1" stop-color="#7a7a84"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="#0e0d13"/>
+  <rect width="800" height="600" fill="url(#glow)"/>
+  <rect x="0" y="500" width="800" height="100" fill="#16141c"/>
+  <ellipse cx="400" cy="508" rx="120" ry="14" fill="#000" opacity=".6"/>
+  <ellipse cx="400" cy="496" rx="95" ry="18" fill="url(#nickel)"/>
+  <rect x="305" y="478" width="190" height="18" fill="url(#nickel)"/>
+  <ellipse cx="400" cy="478" rx="95" ry="18" fill="#e8e8ee"/>
+  <rect x="390" y="270" width="20" height="210" fill="url(#nickel)"/>
+  <path d="M400 330 v110" stroke="#d6d6dc" stroke-width="2" stroke-dasharray="3 4"/>
+  <circle cx="400" cy="446" r="5" fill="#d6d6dc"/>
+  <path d="M260 230 a140 140 0 0 1 280 0 z" fill="url(#globe)"/>
+  <ellipse cx="400" cy="230" rx="140" ry="18" fill="#f8efd9"/>
+  <ellipse cx="400" cy="230" rx="140" ry="18" fill="none" stroke="#c9b17c" stroke-width="2"/>
+  <path d="M320 150 a90 90 0 0 1 60 -48" stroke="#fff" stroke-width="10" stroke-linecap="round" fill="none" opacity=".6"/>
+</svg>

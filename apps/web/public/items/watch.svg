@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="40%" r="80%">
+      <stop offset="0" stop-color="#2b2b33"/>
+      <stop offset="1" stop-color="#08080b"/>
+    </radialGradient>
+    <linearGradient id="steel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f2f2f5"/>
+      <stop offset=".5" stop-color="#8d8d97"/>
+      <stop offset="1" stop-color="#e2e2e8"/>
+    </linearGradient>
+    <linearGradient id="strap" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1b1b20"/>
+      <stop offset="1" stop-color="#2c2c34"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <rect x="330" y="-20" width="140" height="640" rx="20" fill="url(#strap)"/>
+  <g fill="#3a3a44"><rect x="330" y="40" width="140" height="4"/><rect x="330" y="80" width="140" height="4"/><rect x="330" y="520" width="140" height="4"/><rect x="330" y="560" width="140" height="4"/></g>
+  <rect x="560" y="280" width="28" height="40" rx="6" fill="url(#steel)"/>
+  <rect x="548" y="214" width="20" height="26" rx="5" fill="url(#steel)"/>
+  <rect x="548" y="360" width="20" height="26" rx="5" fill="url(#steel)"/>
+  <circle cx="400" cy="300" r="180" fill="url(#steel)"/>
+  <circle cx="400" cy="300" r="160" fill="#101014"/>
+  <circle cx="400" cy="300" r="160" fill="none" stroke="#b197fc" stroke-width="10" stroke-opacity=".35"/>
+  <circle cx="400" cy="300" r="140" fill="#14141a"/>
+  <g stroke="#e9e9ef" stroke-width="4" stroke-linecap="round">
+    <path d="M400 172v22M400 406v22M272 300h22M506 300h22"/>
+  </g>
+  <g stroke="#9b9bab" stroke-width="2" stroke-linecap="round">
+    <path d="M464 189l-6 10M511 236l-10 6M511 364l-10-6M464 411l-6-10M336 411l6-10M289 364l10-6M289 236l10 6M336 189l6 10"/>
+  </g>
+  <circle cx="400" cy="250" r="30" fill="none" stroke="#3a3a46" stroke-width="2"/>
+  <circle cx="350" cy="320" r="30" fill="none" stroke="#3a3a46" stroke-width="2"/>
+  <circle cx="450" cy="320" r="30" fill="none" stroke="#3a3a46" stroke-width="2"/>
+  <path d="M400 300L400 196" stroke="#f4f4f6" stroke-width="7" stroke-linecap="round"/>
+  <path d="M400 300L470 340" stroke="#f4f4f6" stroke-width="9" stroke-linecap="round"/>
+  <path d="M400 300L330 212" stroke="#b197fc" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="400" cy="300" r="9" fill="#b197fc"/>
+  <ellipse cx="340" cy="210" rx="90" ry="40" fill="#fff" opacity=".05" transform="rotate(-30 340 210)"/>
+</svg>
