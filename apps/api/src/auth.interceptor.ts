@@ -10,9 +10,18 @@ const PROTECTED = new Set(['PlaceBid']);
 
 const NICK = /^[\p{L}\p{N}_.-]{3,20}$/u;
 
+function decode(value: string): string | undefined {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    // Malformed percent-encoding (e.g. `Bearer abc%`) is an invalid token, not a server error.
+    return undefined;
+  }
+}
+
 export function parseNickname(header: string | null): string | undefined {
   const match = /^Bearer\s+(.+)$/i.exec(header?.trim() ?? '');
-  const nick = match?.[1] ? decodeURIComponent(match[1]).trim() : undefined;
+  const nick = match?.[1] ? decode(match[1])?.trim() : undefined;
   return nick && NICK.test(nick) ? nick : undefined;
 }
 

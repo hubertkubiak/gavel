@@ -62,6 +62,23 @@ describe('PlaceBid', () => {
     );
   });
 
+  it('rejects bids after ends_at even before the scheduler closes the item', async () => {
+    const { client, clock, store, as } = fixture();
+    clock.now += 60_000;
+    expect(store.get('lamp')?.status).toBe(ItemStatus.ACTIVE);
+    expect(await codeOf(client.placeBid({ itemId: 'lamp', amount: pln(500) }, as('alice')))).toBe(
+      Code.FailedPrecondition,
+    );
+  });
+
+  it('treats a malformed percent-encoded nick as UNAUTHENTICATED, not INTERNAL', async () => {
+    const { client } = fixture();
+    const headers = { Authorization: 'Bearer abc%' };
+    expect(await codeOf(client.placeBid({ itemId: 'lamp', amount: pln(150) }, { headers }))).toBe(
+      Code.Unauthenticated,
+    );
+  });
+
   it('requires an Authorization header (UNAUTHENTICATED)', async () => {
     const { client } = fixture();
     expect(await codeOf(client.placeBid({ itemId: 'lamp', amount: pln(150) }))).toBe(

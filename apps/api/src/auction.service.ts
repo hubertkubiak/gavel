@@ -1,4 +1,5 @@
 import { create, type MessageInitShape } from '@bufbuild/protobuf';
+import { timestampMs } from '@bufbuild/protobuf/wkt';
 import { Code, ConnectError, type HandlerContext, type ServiceImpl } from '@connectrpc/connect';
 import { AuctionService, BidRejectedDetailSchema, ItemEventSchema, ItemStatus } from '@gavel/proto';
 import type { AuctionEvents } from './auction.events.js';
@@ -52,7 +53,9 @@ export function createAuctionService({
       // 2. NOT_FOUND
       const item = requireItem(req.itemId);
       // 3. FAILED_PRECONDITION
-      if (item.status === ItemStatus.ENDED) {
+      // The scheduler's timer may fire a few ms late — `ends_at` is the source of truth.
+      const pastEnd = item.endsAt !== undefined && timestampMs(item.endsAt) <= store.now();
+      if (item.status === ItemStatus.ENDED || pastEnd) {
         throw new ConnectError('Auction has ended', Code.FailedPrecondition);
       }
       const minimum = store.minimumBid(item);

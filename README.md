@@ -57,7 +57,7 @@ Otwórz **http://localhost:4200** w dwóch kartach, wybierz dwa różne nicki i 
 
 ```bash
 docker compose up --build
-# web → http://localhost:4200, api → http://localhost:8080
+# web → http://localhost:4200 (nginx proxuje RPC do API), api → http://localhost:8080
 SEED_FAST=1 docker compose up --build   # aukcje kończą się w 1–5 min
 ```
 
@@ -74,7 +74,7 @@ SEED_FAST=1 docker compose up --build   # aukcje kończą się w 1–5 min
 | `LATENCY_MS` | `0`                     | Sztuczne opóźnienie unary — pokazuje skeletony i blokadę przycisku |
 | `RPC_LOG`    | `1`                     | `0` wyłącza log `[rpc] Method 12.3ms`                              |
 
-Front: `apps/web/src/environments/environment.ts` — `apiUrl`, `useBinaryFormat`, `protocol`.
+Front: `apps/web/src/environments/environment.ts` (dev) i `environment.prod.ts` (build produkcyjny, `apiUrl: '/'` — to samo origin przez nginx) — `apiUrl`, `useBinaryFormat`, `protocol`.
 
 </details>
 

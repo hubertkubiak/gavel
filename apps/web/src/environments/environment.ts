@@ -1,14 +1,8 @@
-export type RpcProtocol = 'connect' | 'grpc-web';
+import type { Environment } from './environment.model';
 
-export interface Environment {
-  /** Base URL of @gavel/api. */
-  apiUrl: string;
-  /** Binary Protobuf on the wire (true) or JSON (false) — compare both in the Network tab. */
-  useBinaryFormat: boolean;
-  /** Connect protocol (default) or gRPC-Web — swapping is a one-line change in transport.ts. */
-  protocol: RpcProtocol;
-}
+export type { Environment, RpcProtocol } from './environment.model';
 
+/** Development (`ng serve`): the API runs separately on :8080, CORS allows :4200. */
 export const environment: Environment = {
   apiUrl: 'http://localhost:8080',
   useBinaryFormat: true,

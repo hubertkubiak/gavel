@@ -3,9 +3,11 @@ import { Service, computed, signal } from '@angular/core';
 const KEY = 'gavel.nickname';
 export const NICK_PATTERN = /^[\p{L}\p{N}_.-]{3,20}$/u;
 
+/** A stored nick the server would reject (e.g. edited by hand) counts as no nick at all. */
 function read(): string | null {
   try {
-    return localStorage.getItem(KEY);
+    const nick = localStorage.getItem(KEY);
+    return nick && NICK_PATTERN.test(nick) ? nick : null;
   } catch {
     return null;
   }

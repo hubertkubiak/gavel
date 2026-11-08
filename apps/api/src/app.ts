@@ -34,7 +34,11 @@ export async function buildApp(options: AppOptions = {}) {
     maxAge: 7200,
   });
 
+  // Aborted on close so open WatchItem streams end instead of keeping app.close() waiting.
+  const shutdown = new AbortController();
+
   await app.register(fastifyConnectPlugin, {
+    shutdownSignal: shutdown.signal,
     interceptors: [
       ...(options.log ? [loggingInterceptor] : []),
       authInterceptor,
@@ -46,6 +50,8 @@ export async function buildApp(options: AppOptions = {}) {
   app.get('/healthz', () => ({ ok: true }));
 
   scheduler.start();
+  // preClose runs before the server stops accepting and waits for in-flight requests.
+  app.addHook('preClose', async () => shutdown.abort());
   app.addHook('onClose', async () => scheduler.stop());
 
   return { app, store, events, scheduler };
