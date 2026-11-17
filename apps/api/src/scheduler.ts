@@ -3,6 +3,9 @@ import { ItemStatus } from '@gavel/proto';
 import type { AuctionEvents } from './auction.events.js';
 import type { AuctionStore } from './auction.store.js';
 
+/** Largest delay `setTimeout` accepts (2^31 − 1 ms, ~24.8 days). */
+const MAX_TIMEOUT_MS = 2 ** 31 - 1;
+
 /** Closes every auction at its `ends_at` and broadcasts `auction_ended`. */
 export class AuctionScheduler {
   private readonly timers = new Map<string, NodeJS.Timeout>();
@@ -21,10 +24,12 @@ export class AuctionScheduler {
     if (!item?.endsAt || item.status !== ItemStatus.ACTIVE) return;
     clearTimeout(this.timers.get(itemId));
     const delay = Math.max(0, timestampMs(item.endsAt) - this.store.now());
-    this.timers.set(
-      itemId,
-      setTimeout(() => this.close(itemId), delay),
-    );
+    // Node fires an overflowing delay after 1 ms — wait in chunks and re-check instead.
+    const timer =
+      delay > MAX_TIMEOUT_MS
+        ? setTimeout(() => this.schedule(itemId), MAX_TIMEOUT_MS)
+        : setTimeout(() => this.close(itemId), delay);
+    this.timers.set(itemId, timer);
   }
 
   close(itemId: string): void {
